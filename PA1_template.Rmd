@@ -7,10 +7,25 @@ output:
     keep_md: true
 ---
 
+# TO DISCARD
+tbl.activity <- mutate(tbl.activity, date = ymd(date), wd = as.character(wday(date, label = TRUE)), weekday.type = ifelse (between(wday(date), 2,6), "weekday", "weekend"))
+
+
 
 ## Loading and preprocessing the data
 
+```{r}
+library(dplyr)
+library(lubridate)
 
+df.activity <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE, stringsAsFactors = FALSE)
+tbl.activity <- tbl_df(df.activity)
+rm("df.activity")
+tbl.activity <- tbl.activity %>%
+        mutate(date = ymd(date), weekday.type.char = ifelse (between(wday(date), 2,6), "weekday", "weekend")) %>%
+        transform(weekday.type = factor(weekday.type.char))
+
+```
 
 ## What is mean total number of steps taken per day?
 
