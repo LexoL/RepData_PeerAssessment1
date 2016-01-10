@@ -7,11 +7,13 @@ output:
     keep_md: true
 ---
 
-## Loading and preprocessing the data
+The report falls into 8 sections that corresponds the first eight steps of the course project assignment. The ninth step neen not be presented in this report. 
 
 ## 1. Code for reading in the dataset and/or processing the data
 
-```{r}
+First, we check if all the libraies and file are avilable. 
+
+```{r, echo = TRUE}
 if(!require(dplyr, quietly = TRUE, warn.conflicts = FALSE)){
         stop('I need dplyr library. Please run install.packages("dplyr")!')
         }
@@ -27,8 +29,11 @@ if(!file.exists("activity.zip")){
                   'Please copy activity.zip file into your working directory!',
                    sep = "\n"))
         }
+```
 
+Then, we download the dataset from the zip-file, convert it to `tbl_df`, and convert the data to a standard data format. Next we delete `df.activity` data frame since that frame is no loger needed. Finally, we group the loaded data and summarize them. The summary is represented with histogramin section 2. No `NA`s has been exluded from the analysis, yet. 
 
+```{r, echo = TRUE}
 df.activity     <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE, stringsAsFactors = FALSE)
 tbl.activity    <- tbl_df(df.activity)
 tbl.activity    <- mutate(tbl.activity, date = ymd(date))
@@ -36,91 +41,107 @@ tbl.activity    <- mutate(tbl.activity, date = ymd(date))
 rm("df.activity")
 
 tbl.by_date     <- group_by(tbl.activity,date)
-total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = TRUE))
+tbl.total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = TRUE))
 ```
 
-## Histogam 2
-2. Histogram of the total number of steps taken each day
 
-```{r histogram1, fig.height = 4}
-with(total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main = "Histogram of total steps per day"))
+## 2. Histogram of the total number of steps taken each day
+
+```{r histogram1, fig.height = 4, echo = TRUE}
+with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main = "Histogram of total steps per day"))
 ```
 
-## What is mean total number of steps taken per day?
-3. Mean and median number of steps taken each day
 
-For steps taken each day, the mean is `r mean(total$totalperday, na.rm = TRUE)`
-and median is `r median(total$totalperday, na.rm = TRUE)`. 
+## 3. Mean and median number of steps taken each day
+
+For steps taken each day, the mean is `r mean(tbl.total$totalperday, na.rm = TRUE)`
+and median is `r median(tbl.total$totalperday, na.rm = TRUE)`. 
 
 
-## What is the average daily activity pattern?
-4. Time series plot of the average number of steps taken
+## 4. Time series plot of the average number of steps taken (what is the average daily activity pattern?)
 
-```{r}
+First we group and summarize the initial data by interval (we calculate the average number of steps per each interval).
+
+```{r, echo = TRUE}
 tbl.by_interval         <- group_by(tbl.activity, interval)
-interval_average        <- summarize(tbl.by_interval, averageperinterval = mean(steps, na.rm = TRUE))
+tbl.interval_average    <- summarize(tbl.by_interval, averageperinterval = mean(steps, na.rm = TRUE))
 ```
 
-Draw plot
+Then, we represent the result with the next plot. 
 
-```{r plot4, fig.height = 4}
-with(interval_average, 
+```{r plot4, echo = TRUE, fig.height = 4}
+with(tbl.interval_average, 
      plot(interval, averageperinterval, type = "l", col = "blue", xlab = "5 minute interval no.", 
           ylab = "Average number of steps per interval"))
 
 title(main = "Plot of average number of steps per interval")
 ```
 
-5. The 5-minute interval that, on average, contains the maximum number of steps
+## 5. The 5-minute interval that, on average, contains the maximum number of steps
 
-The index of the 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is `r arrange(interval_average, desc(averageperinterval))$interval[1]`, at which the the average number of steps reach maximum that equals `r arrange(interval_average, desc(averageperinterval))$averageperinterval[1]`. 
+The index of the 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is `r arrange(tbl.interval_average, desc(averageperinterval))$interval[1]`, at which the average number of steps reaches its maximum that equals `r arrange(tbl.interval_average, desc(averageperinterval))$averageperinterval[1]`. 
 
 
-## Imputing missing values
-6. Code to describe and show a strategy for imputing missing data
+## 6. Code to describe and show a strategy for imputing missing data
 
-The total number of observation with NA in the dataset is `r sum(!complete.cases(tbl.activity))`.
+The total number of observation with `NA` in the dataset is `r sum(!complete.cases(tbl.activity))`.  
 
-To fill in of the missing values, we substitute each of them with the mean value of average values for the corresponding interval. 
+To fill in of the missing values, we substitute each of them with the mean value of average values for the corresponding interval. We take the average values from `tbl.interval_average`, which is already ready to use. 
 
-```{r}
+```{r, echo = TRUE}
 tbl.steps_imputed               <- tbl.activity
-interval_average$subst_steps    <- sapply(interval_average$averageperinterval,  
+tbl.interval_average$subst_steps    <- sapply(tbl.interval_average$averageperinterval,  
                                           function(x) as.integer(round(x,0)))
 
 tbl.steps_imputed               <- tbl.steps_imputed %>%
-                                   merge(interval_average, by.x = "interval", by.y = "interval", all.x = TRUE) %>%
+                                   merge(tbl.interval_average, by.x = "interval", by.y = "interval", all.x = TRUE) %>%
                                    mutate(steps = ifelse(is.na(steps), subst_steps, steps)) %>%
                                    select(steps,  date, interval) %>%
                                    arrange(date,interval)
 
 tbl.imputed_by_date             <- group_by(tbl.steps_imputed,date)
-total_imputed                   <- summarize(tbl.imputed_by_date, totalperday = sum(steps, na.rm = TRUE))
+tbl.total_imputed               <- summarize(tbl.imputed_by_date, totalperday = sum(steps, na.rm = TRUE))
 ```
 
-7. Histogram of the total number of steps taken each day after missing values are imputed
 
-Histogram of the total number of steps taken each day (imputed)
 
-```{r histogram6, fig.height = 4}
-with(total_imputed, hist(totalperday,breaks = 8, xlab = "Total steps per day", 
+
+## 7. Histogram of the total number of steps taken each day after missing values are imputed
+
+The result of above transforations, grouping, and summazizing is represented with the next histogram. 
+
+```{r histogram6, echo = TRUE, fig.height = 4}
+with(tbl.total_imputed, hist(totalperday,breaks = 8, xlab = "Total steps per day", 
      main = "Histogram of total steps per day (na steps imputed)"))
 ```
     
-HEADING!!! INTERPRETATION OF CHANGES    
 
-Mean and median number of steps taken each day (imputed)   
+For steps taken each day (imputed), the mean is `r mean(tbl.total_imputed$totalperday, na.rm = TRUE)`
+and median is `r median(tbl.total_imputed$totalperday, na.rm = TRUE)`. Let's compare these results with the earlier ones, when `NA` were not imputed (numbers were rounded), inthe table below. 
 
-For steps taken each day (imputed), the mean is `r mean(total_imputed$totalperday, na.rm = TRUE)`
-and median is `r median(total_imputed$totalperday, na.rm = TRUE)`. 
+```{r, echo=TRUE}
+mean.init       <- trunc(mean(tbl.total$totalperday, na.rm = TRUE))
+median.init     <- median(tbl.total$totalperday, na.rm = TRUE)
+
+mean.imputed    <- trunc(mean(tbl.total_imputed$totalperday))
+median.imputed  <- median(tbl.total_imputed$totalperday)
+
+data.frame(row.names = c("NAs Remain","NAs Imputed", "Imp'd-Rem'n"), 
+           Mean = c(mean.init, mean.imputed, mean.imputed - mean.init), Median = c(median.init,median.imputed, median.imputed - median.init))
+```
+
+The mean and median in the dataset, where `NA`s were imputed, are greater than those in the initial dataset. This is so because `NA`s were partially
+substituded with strictly positive values that has made mean and median grow when switching consideration from the initial dataset to the dataset with
+imputed values. 
+    
 
 
 
-## Are there differences in activity patterns between weekdays and weekends?
+Are there differences in activity patterns between weekdays and weekends?
 
-8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+## 8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends (Are there differences in activity patterns between weekdays and weekends?)
 
-```{r}
+```{r, echo = TRUE}
 tbl.imputed_by_weekday.type_interval <- tbl.steps_imputed %>% 
                                         mutate(weekday.type = ifelse (between(wday(date), 2,6), 
                                               "weekday", "weekend")) %>%
@@ -132,10 +153,20 @@ tbl.imputed_by_weekday.type_interval <- tbl.steps_imputed %>%
                                                   na.rm = TRUE)) 
 ```
 
-Draw the plot
 
-```{r plot8, fig.height = 4}
+The result is represented with the following plot lattice:
+
+```{r plot8, echo = TRUE, fig.height = 4}
 xyplot(averagepertypeinterval ~ interval | weekday.type, data = tbl.imputed_by_weekday.type_interval, 
        layout = c(1, 2), type = 'l', xlab = "Interval", ylab = "Number of steps")
         
 ```
+
+We can see some differences in activity patterns between weekdays and weekends:
+
+- on weekdays, people beging walking earlier than on weekends
+- on weekends, people walks more after the morning maximum as well as stop walking later than on weekdays
+- on weekends, morning walking maximun is lower than on weekdays
+
+We may assumme that people sleep longer and need not go so far on weekends in comparison to weekdays. Still, people have more *local* walk on weekends
+because they have somewhat more spare time. 
