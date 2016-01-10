@@ -2,11 +2,14 @@
 LexoL  
 January 10, 2016  
 
-The report falls into 8 sections that corresponds the first eight steps of the course project assignment. The ninth step neen not be presented in this report. 
+The report falls into 8 sections just in correspondence to the first eight steps of the course project assignment. The ninth step need not be presented in this report: the last step is about the report saving and submitting. 
+
+
 
 ## 1. Code for reading in the dataset and/or processing the data
 
-First, we check if all the libraies and file are avilable. 
+
+First, we check if all the libraries and file are available. 
 
 
 ```r
@@ -27,7 +30,7 @@ if(!file.exists("activity.zip")){
         }
 ```
 
-Then, we download the dataset from the zip-file, convert it to `tbl_df`, and convert the data to a standard data format. Next we delete `df.activity` data frame since that frame is no loger needed. Finally, we group the loaded data and summarize them. The summary is represented with histogramin section 2. No `NA`s has been exluded from the analysis, yet. 
+Then, we download the dataset from the zip-file, convert it to `tbl_df`, and convert the data to a standard data format. Next we delete `df.activity` data frame since that frame is no longer needed. Finally, we group the loaded data and summarize them. The summary is represented with histogram in section 2. No `NA`s has been excluded from the analysis, yet. 
 
 
 ```r
@@ -42,6 +45,7 @@ tbl.total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = T
 ```
 
 
+
 ## 2. Histogram of the total number of steps taken each day
 
 
@@ -52,10 +56,12 @@ with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main 
 ![](PA1_template_files/figure-html/histogram1-1.png)\
 
 
+
 ## 3. Mean and median number of steps taken each day
 
 For steps taken each day, the mean is 9354.2295082
 and median is 10395. 
+
 
 
 ## 4. Time series plot of the average number of steps taken (what is the average daily activity pattern?)
@@ -81,9 +87,12 @@ title(main = "Plot of average number of steps per interval")
 
 ![](PA1_template_files/figure-html/plot4-1.png)\
 
+
+
 ## 5. The 5-minute interval that, on average, contains the maximum number of steps
 
 The index of the 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is 835, at which the average number of steps reaches its maximum that equals 206.1698113. 
+
 
 
 ## 6. Code to describe and show a strategy for imputing missing data
@@ -113,7 +122,7 @@ tbl.total_imputed               <- summarize(tbl.imputed_by_date, totalperday = 
 
 ## 7. Histogram of the total number of steps taken each day after missing values are imputed
 
-The result of above transforations, grouping, and summazizing is represented with the next histogram. 
+The result of above transformations, grouping, and summarizing is represented with the next histogram. 
 
 
 ```r
@@ -125,7 +134,7 @@ with(tbl.total_imputed, hist(totalperday,breaks = 8, xlab = "Total steps per day
     
 
 For steps taken each day (imputed), the mean is 1.0765639\times 10^{4}
-and median is 10762. Let's compare these results with the earlier ones, when `NA` were not imputed (numbers were rounded), inthe table below. 
+and median is 10762. Let's compare these results with the earlier ones, when `NA` were not imputed (numbers were rounded), in the table below. 
 
 
 ```r
@@ -147,13 +156,10 @@ data.frame(row.names = c("NAs Remain","NAs Imputed", "Imp'd-Rem'n"),
 ```
 
 The mean and median in the dataset, where `NA`s were imputed, are greater than those in the initial dataset. This is so because `NA`s were partially
-substituded with strictly positive values that has made mean and median grow when switching consideration from the initial dataset to the dataset with
+substituted with strictly positive values that has made mean and median grow when switching consideration from the initial dataset to the dataset with
 imputed values. 
     
 
-
-
-Are there differences in activity patterns between weekdays and weekends?
 
 ## 8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends (Are there differences in activity patterns between weekdays and weekends?)
 
@@ -183,9 +189,9 @@ xyplot(averagepertypeinterval ~ interval | weekday.type, data = tbl.imputed_by_w
 
 We can see some differences in activity patterns between weekdays and weekends:
 
-- on weekdays, people beging walking earlier than on weekends
+- on weekdays, people begin walking earlier than on weekends
 - on weekends, people walks more after the morning maximum as well as stop walking later than on weekdays
-- on weekends, morning walking maximun is lower than on weekdays
+- on weekends, morning walking maximum is lower than on weekdays
 
-We may assumme that people sleep longer and need not go so far on weekends in comparison to weekdays. Still, people have more *local* walk on weekends
+We may assume that people sleep longer and need not go so far on weekends in comparison to weekdays. Still, people have more *local* walk on weekends
 because they have somewhat more spare time. 
