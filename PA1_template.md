@@ -1,11 +1,6 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-author: LexoL
-date: January 10, 2016
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
+LexoL  
+January 10, 2016  
 
 
 ## Loading and preprocessing the data
