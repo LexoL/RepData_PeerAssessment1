@@ -51,8 +51,9 @@ tbl.total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = T
 
 ## 2. Histogram of the total number of steps taken each day 
 
-```{r histogram1, fig.height = 4, echo = TRUE}
-with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main = "Histogram of total steps per day"))
+```{r histogram1, fig.height = 6, echo = TRUE}
+with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", 
+                     main = "Histogram of total steps per day"))
 ```
 
 
@@ -79,7 +80,7 @@ tbl.interval_average    <- summarize(tbl.by_interval, averageperinterval = mean(
 
 Then, we represent the result with the next plot. 
 
-```{r plot4, echo = TRUE, fig.height = 4}
+```{r plot4, echo = TRUE, fig.height = 6}
 with(tbl.interval_average, 
      plot(interval, averageperinterval, type = "l", col = "blue", xlab = "5 minute interval no.", 
           ylab = "Average number of steps per interval"))
@@ -123,7 +124,7 @@ tbl.total_imputed               <- summarize(tbl.imputed_by_date, totalperday = 
 
 The result of above transformations, grouping, and summarizing is represented with the next histogram. 
 
-```{r histogram6, echo = TRUE, fig.height = 4}
+```{r histogram6, echo = TRUE, fig.height = 6}
 with(tbl.total_imputed, hist(totalperday,breaks = 8, xlab = "Total steps per day", 
      main = "Histogram of total steps per day (na steps imputed)"))
 ```
@@ -140,7 +141,8 @@ mean.imputed    <- trunc(mean(tbl.total_imputed$totalperday))
 median.imputed  <- median(tbl.total_imputed$totalperday)
 
 data.frame(row.names = c("NAs Remain","NAs Imputed", "Imp'd-Rem'n"), 
-           Mean = c(mean.init, mean.imputed, mean.imputed - mean.init), Median = c(median.init,median.imputed, median.imputed - median.init))
+           Mean = c(mean.init, mean.imputed, mean.imputed - mean.init), 
+           Median = c(median.init,median.imputed, median.imputed - median.init))
 ```
 
 The mean and median in the dataset, where `NA`s were imputed, are greater than those in the initial dataset. This is so because `NA`s were partially
@@ -166,7 +168,7 @@ tbl.imputed_by_weekday.type_interval <- tbl.steps_imputed %>%
 
 The result is represented with the following plot lattice:
 
-```{r plot8, echo = TRUE, fig.height = 4}
+```{r plot8, echo = TRUE, fig.height = 6}
 xyplot(averagepertypeinterval ~ interval | weekday.type, data = tbl.imputed_by_weekday.type_interval, 
        layout = c(1, 2), type = 'l', xlab = "Interval", ylab = "Number of steps")
         

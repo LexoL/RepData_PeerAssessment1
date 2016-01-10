@@ -55,7 +55,8 @@ tbl.total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = T
 
 
 ```r
-with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main = "Histogram of total steps per day"))
+with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", 
+                     main = "Histogram of total steps per day"))
 ```
 
 ![plot of chunk histogram1](figure/histogram1-1.png)
@@ -154,7 +155,8 @@ mean.imputed    <- trunc(mean(tbl.total_imputed$totalperday))
 median.imputed  <- median(tbl.total_imputed$totalperday)
 
 data.frame(row.names = c("NAs Remain","NAs Imputed", "Imp'd-Rem'n"), 
-           Mean = c(mean.init, mean.imputed, mean.imputed - mean.init), Median = c(median.init,median.imputed, median.imputed - median.init))
+           Mean = c(mean.init, mean.imputed, mean.imputed - mean.init), 
+           Median = c(median.init,median.imputed, median.imputed - median.init))
 ```
 
 ```
