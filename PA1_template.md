@@ -1,6 +1,11 @@
-# Reproducible Research: Peer Assessment 1
-LexoL  
-January 10, 2016  
+-- **YAML header was disabled, to make knitr2html() runnable against this Rmd file.**   
+title: "Reproducible Research: Peer Assessment 1"  
+author: LexoL  
+date: January 10, 2016   
+output:    
+  html_document:   
+    Keep_md: true   
+---
 
 The report falls into 8 sections just in correspondence to the first eight steps of the course project assignment. The ninth step need not be presented in this report: the last step is about the report saving and submitting. 
 
@@ -46,16 +51,20 @@ tbl.total           <- summarize(tbl.by_date, totalperday = sum(steps, na.rm = T
 
 
 
-## 2. Histogram of the total number of steps taken each day
+## 2. Histogram of the total number of steps taken each day 
 
 
 ```r
 with(tbl.total, hist(totalperday,breaks = 8, xlab = "Total steps per day", main = "Histogram of total steps per day"))
 ```
 
-![](PA1_template_files/figure-html/histogram1-1.png)\
+![plot of chunk histogram1](figure/histogram1-1.png)
 
 
+### Note: The Difference Between Bar Charts and Histograms
+
+"...Here is the main difference between bar charts and histograms. With bar charts, each column represents a group defined by a categorical variable; and with histograms, each column represents a group defined by a quantitative variable...", cited from 
+[Bar Charts and Histograms @ stattreck.com](http://stattrek.com/statistics/charts/histogram.aspx?Tutorial=AP)
 
 ## 3. Mean and median number of steps taken each day
 
@@ -85,7 +94,7 @@ with(tbl.interval_average,
 title(main = "Plot of average number of steps per interval")
 ```
 
-![](PA1_template_files/figure-html/plot4-1.png)\
+![plot of chunk plot4](figure/plot4-1.png)
 
 
 
@@ -130,10 +139,10 @@ with(tbl.total_imputed, hist(totalperday,breaks = 8, xlab = "Total steps per day
      main = "Histogram of total steps per day (na steps imputed)"))
 ```
 
-![](PA1_template_files/figure-html/histogram6-1.png)\
+![plot of chunk histogram6](figure/histogram6-1.png)
     
 
-For steps taken each day (imputed), the mean is 1.0765639\times 10^{4}
+For steps taken each day (imputed), the mean is 1.0765639 &times; 10<sup>4</sup>
 and median is 10762. Let's compare these results with the earlier ones, when `NA` were not imputed (numbers were rounded), in the table below. 
 
 
@@ -185,7 +194,7 @@ xyplot(averagepertypeinterval ~ interval | weekday.type, data = tbl.imputed_by_w
        layout = c(1, 2), type = 'l', xlab = "Interval", ylab = "Number of steps")
 ```
 
-![](PA1_template_files/figure-html/plot8-1.png)\
+![plot of chunk plot8](figure/plot8-1.png)
 
 We can see some differences in activity patterns between weekdays and weekends:
 
