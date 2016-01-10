@@ -11,7 +11,7 @@ output:
 tbl.activity <- mutate(tbl.activity, date = ymd(date), wd = as.character(wday(date, label = TRUE)), weekday.type = ifelse (between(wday(date), 2,6), "weekday", "weekend"))
 
 
-
+ 
 ## Loading and preprocessing the data
 
 ```{r}
