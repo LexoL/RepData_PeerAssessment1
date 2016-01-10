@@ -27,6 +27,7 @@ tbl.activity <- mutate(tbl.activity, date = ymd(date), wd = as.character(wday(da
 ```{r}
 library(dplyr)
 library(lubridate)
+library(lattice)
 
 df.activity <- read.csv(unz("activity.zip", "activity.csv"), header = TRUE, stringsAsFactors = FALSE)
 tbl.activity <- tbl_df(df.activity)
@@ -93,6 +94,49 @@ tbl.steps_imputed <- tbl.steps_imputed %>%
         mutate(steps = ifelse(is.na(steps), subst_steps, steps)) %>%
         select(steps,  date, interval, weekday.type.char, weekday.type) %>%
         arrange(date,interval)
+
+tbl.imputed_by_date <- group_by(tbl.steps_imputed,date)
+total_imputed <- summarize(tbl.imputed_by_date, totalperday = sum(steps, na.rm = TRUE))
 ```
 
+7. Histogram of the total number of steps taken each day after missing values are imputed
+
+Histogram of the total number of steps taken each day (imputed)
+
+```{r histogram6, fig.height = 4}
+with(total_imputed , hist(totalperday,breaks = 8, 
+xlab = "Total steps per day", title(main = "Total per day (na steps imputed")))
+
+```
+    
+HEADING!!! INTERPRETATION OF CHANGES    
+
+Mean and median number of steps taken each day (imputed)   
+
+For steps taken each day (imputed), the mean is `r mean(total_imputed$totalperday, na.rm = TRUE)`
+and median is `r median(total_imputed$totalperday, na.rm = TRUE)`. 
+
+
+
 ## Are there differences in activity patterns between weekdays and weekends?
+
+8. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
+
+```{r}
+tbl.imputed_by_weekday.type_interval <- tbl.steps_imputed %>% 
+        group_by(weekday.type, date, interval) %>%
+        summarize(averagepertypedateinterval= mean(steps, na.rm = TRUE)) %>%
+        group_by(weekday.type, interval) %>%
+        summarize(averagepertypeinterval = mean(averagepertypedateinterval, na.rm = TRUE)) 
+```
+
+
+```{r plot8, fig.height = 4}
+
+
+xyplot(averagepertypeinterval ~ interval | weekday.type, data = tbl.imputed_by_weekday.type_interval, 
+       layout = c(1, 2), type = 'l', xlab = "Interval", ylab = "Number of steps")
+        
+```
+
+
