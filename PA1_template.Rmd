@@ -85,15 +85,14 @@ The total number of observation with NA in the dataset is `r sum(!complete.cases
 To fill in of the missing values, we substitute each of them with the mean value of average values for the corresponding interval. 
 ```{r}
 tbl.steps_imputed <- tbl.activity
-substitute <- is.na(tbl.steps_imputed$steps)
-tbl.steps_imputed$steps <- as.numeric(tbl.steps_imputed$steps)
+interval_average$subst_steps <- sapply(interval_average$averageperinterval,  
+                                          function(x) as.integer(round(x,0)))
 
-tbl.steps_imputed$steps <- tbl.steps_imputed %>%
+tbl.steps_imputed <- tbl.steps_imputed %>%
         merge(interval_average, by.x = "interval", by.y = "interval", all.x = TRUE) %>%
-        mutate(steps = ifelse(is.na(steps), averageperinterval, steps)) %>%
-        select(steps)
-
-
+        mutate(steps = ifelse(is.na(steps), subst_steps, steps)) %>%
+        select(steps,  date, interval, weekday.type.char, weekday.type) %>%
+        arrange(date,interval)
 ```
 
 ## Are there differences in activity patterns between weekdays and weekends?
