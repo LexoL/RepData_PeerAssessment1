@@ -72,11 +72,28 @@ with(interval_average, plot(interval, averageperinterval, type = "l",
 
 ```
 
+5. The 5-minute interval that, on average, contains the maximum number of steps
 
+The index of the 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps is `r arrange(interval_average, desc(averageperinterval))$interval[1]`, at which the the average number of steps reach maximum that equals `r arrange(interval_average, desc(averageperinterval))$averageperinterval[1]`. 
 
 
 ## Imputing missing values
+6. Code to describe and show a strategy for imputing missing data
+
+The total number of observation with NA in the dataset is `r sum(!complete.cases(tbl.activity))`.
+
+To fill in of the missing values, we substitute each of them with the mean value of average values for the corresponding interval. 
+```{r}
+tbl.steps_imputed <- tbl.activity
+substitute <- is.na(tbl.steps_imputed$steps)
+tbl.steps_imputed$steps <- as.numeric(tbl.steps_imputed$steps)
+
+tbl.steps_imputed$steps <- tbl.steps_imputed %>%
+        merge(interval_average, by.x = "interval", by.y = "interval", all.x = TRUE) %>%
+        mutate(steps = ifelse(is.na(steps), averageperinterval, steps)) %>%
+        select(steps)
 
 
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
